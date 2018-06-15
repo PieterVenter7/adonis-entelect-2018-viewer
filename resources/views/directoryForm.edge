@@ -1,0 +1,8 @@
+<form method="POST" action="/game">
+    <div class="form-group">
+      {{ csrfField() }}
+      <label for="ReplayPath">Replay Path</label>
+      <input type="text" class="form-control" id="ReplayPath" name="replay_path" />
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>

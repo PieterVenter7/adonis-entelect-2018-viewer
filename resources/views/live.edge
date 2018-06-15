@@ -1,0 +1,125 @@
+@layout('master')
+
+@section('content')
+    <div id="game" class="card">
+        <div class="card-header">
+            <h5 class="card-title">Game Round@{{data.currentRound}} of Match @{{data.match}}</h5>
+            <form method="POST" action="/game">
+                <div class="form-group">
+                {{ csrfField() }}
+                <label for="ReplayPath">Replay Path</label>
+                <input type="hidden" :value="data.matchPath" class="form-control" id="ReplayPath" name="replay_path" />
+                </div>
+                <button type="submit" class="btn btn-primary">replay</button>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <ul class="list-group">
+                        <li class="list-group-item">@{{data.playerA}}</li>
+                        <li class="list-group-item">Health: @{{data.state.players[0].health}}</li>
+                        <li class="list-group-item">Energy: @{{data.state.players[0].energy}}</li>
+                        <li class="list-group-item">Score: @{{data.state.players[0].score}}</li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <ul class="list-group">
+                        <li class="list-group-item">@{{data.playerB}}</li>
+                        <li class="list-group-item">Health: @{{data.state.players[1].health}}</li>
+                        <li class="list-group-item">Energy: @{{data.state.players[1].energy}}</li>
+                        <li class="list-group-item">Score: @{{data.state.players[1].score}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div v-for="row in data.state.gameMap" class="row">
+                <div v-for="column in row" class="col">
+                    <i v-if="buildingIcon(column)" :style="buildingStyle(column)" :class="buildingIcon(column)"></i>
+                    <i v-if="column.missiles.length > 0" v-for="missile in column.missiles" :style="missileStyle(missile)" class="fas fa-rocket"></i>
+                </div>
+            </div>
+        </div>
+        {{--  @{{ data }}  --}}
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.js"></script>
+    <script src="https://unpkg.com/@adonisjs/websocket-client@1.0.9/dist/Ws.browser.min.js"></script>
+    <script>
+        setTimeout(() => {
+            var app = new Vue({
+                el: '#game',
+                data: {
+                    message: 'Hello Vue!',
+                    ws: null,
+                    game: null,
+                    data: {}
+                },
+                mounted () {
+                    console.log(adonis)
+                    this.ws = adonis.Ws('ws://localhost:3333')
+                    this.ws.connect()
+                    this.ws.on('open', () => {
+                        this.game = this.ws.subscribe('live')
+                        this.game.on('new:round', (data) => {
+                            this.data = data
+                        })
+                    })
+                },
+                methods: {
+                    missileStyle(missile){
+                        if(missile.playerType == 'A') {
+                            return "color:red;transform: rotateZ(45deg);"
+                        } else {
+                            return "color:blue;transform: rotateZ(-134deg);"
+                        }
+                    },
+                    buildingStyle(column){
+                        style = '';
+                        if(column.buildings.length > 0) {
+                            let building = column.buildings[0];
+                            if(building.constructionTimeLeft >= 0) {
+                                if(building.playerType == "A") {
+                                    style += "color:pink;"
+                                } else {
+                                    style += "color:lightblue;"
+                                    if(building.buildingType == "ATTACK") {
+                                        style += "transform:rotatez(-180deg);"
+                                    }
+                                }
+                            } else if(building.playerType == "A") {
+                                style += "color:red;"
+                            } else if(building.playerType == "B") {
+                                style += "color:blue;"
+                                if(building.buildingType == "ATTACK") {
+                                    style += "transform:rotatez(-180deg);"
+                                }
+                            }
+                        }
+                        
+                        return style
+                    },
+                    buildingIcon(column) {
+                        if(column.buildings.length > 0) {
+                            let building = column.buildings[0]
+                            switch(building.buildingType) {
+                                case "ENERGY":
+                                    return "fas fa-bolt"
+                                    break
+                                case "ATTACK":
+                                    return "fas fa-fighter-jet"
+                                    break
+                                case "DEFENSE":
+                                    return "far fa-hospital"
+                                    break
+                            }
+                        } else if (column.missiles.length == 0) {
+                            return "far fa-square"
+                        }
+                        return false
+                    }
+                }
+            })
+        },1000)
+    </script>
+@endsection

@@ -1,0 +1,83 @@
+
+@layout('master')
+
+@section('content')
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title">Game  Round{{currentRound}}</h5>
+    <a href="{{ route('live') }}" id="pause" type="button" class="btn btn-secondary">Live</a>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col">
+        <ul class="list-group">
+          <li class="list-group-item">{{playerA}}</li>
+          <li class="list-group-item">Health: {{state.players[0].health}}</li>
+          <li class="list-group-item">Energy: {{state.players[0].energy}}</li>
+          <li class="list-group-item">Score: {{state.players[0].score}}</li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="list-group">
+          <li class="list-group-item">{{playerB}}</li>
+          <li class="list-group-item">Health: {{state.players[1].health}}</li>
+          <li class="list-group-item">Energy: {{state.players[1].energy}}</li>
+          <li class="list-group-item">Score: {{state.players[1].score}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    @each(row in state.gameMap)
+      <div class="row">
+        @each(column in row)
+          <div class="col">
+            @if(column.buildings[0])
+              @if(column.buildings[0].buildingType == "ENERGY")
+                @include('energy')
+              @endif
+              @if(column.buildings[0].buildingType == "ATTACK")
+                @include('attack')
+              @endif
+              @if(column.buildings[0].buildingType == "DEFENSE")
+                @include('defence')
+              @endif
+            @elseif(column.missiles.length == 0)
+              <i class="far fa-square"></i>
+            @endif
+            @each(missile in column.missiles)
+              @include("missile")
+            @endeach
+          </div>
+        @endeach
+      </div>
+    @endeach
+  </div>
+  <div class="card-body">
+    @if(currentRound != 0) 
+    <a href="{{ route('game', { round: (currentRound - 1) }) }}">
+      Prev
+    </a>
+    @endif
+    @if(currentRound != maxRounds)
+    <a href="{{ route('game', { round: (currentRound +1) }) }}">
+      next
+    </a>
+    @endif
+    <div class="btn-group" role="group" aria-label="Basic example">
+      <a href="{{ route('game', { round: (currentRound +1) }) }}" id="pause" type="button" class="btn btn-secondary"><i class="fas fa-pause"></i></a>
+      <a href="{{ route('game', { round: (currentRound +1),speed:1000 }) }}" id="play" type="button" class="btn btn-secondary"><i class="fas fa-play"></i></a>
+      <a href="{{ route('game', { round: (currentRound +1),speed:700 }) }}" id="faster" type="button" class="btn btn-secondary"><i class="fas fa-step-forward"></i></a>
+      <a href="{{ route('game', { round: (currentRound +1),speed:300 }) }}" id="fastest" type="button" class="btn btn-secondary"><i class="fas fa-fast-forward"></i></a>
+    </div>
+  </div>
+</div>
+{{speed}}
+<script type="text/javascript">
+  var timeOut = ""
+  
+  @if(speed > 0 && currentRound != maxRounds) 
+  timeOut = setTimeout(()=>window.location="{{ route('game', { round: (currentRound +1),speed:speed }) }}",{{speed}})
+  @endif
+</script>
+@endsection

@@ -1,0 +1,13 @@
+@if(column.buildings[0].playerType === "A")
+    @if(column.buildings[0].constructionTimeLeft === -1)
+    <i class="fas fa-user-shield" title="H: {{column.buildings[0].health}}"></i>
+    @else
+    <i style="color:gray" class="fas fa-user-shield" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    @endif
+@else
+    @if(column.buildings[0].constructionTimeLeft === -1)
+    <i class="fas fa-shield-alt" st title="H: {{column.buildings[0].health}}"></i>
+    @else
+    <i style="color:gray" class="fas fa-shield-alt" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    @endif
+@endif
