@@ -40,6 +40,19 @@ fs.watch(ENV.get("LIVE_REPLAY_PATH"), async (eventType, filename) => {
 //   }
 })
 
+function getLog(roundPath) {
+  return new Promise(function(resolve, reject) {
+    console.log(path.join(roundPath,'Console','BotOutput.txt'))
+    fs.readFile(path.join(roundPath,'Console','BotOutput.txt'),'utf-8', function(err, data){
+        if (err) 
+            reject(err); 
+        else 
+          console.log(data)
+          resolve(data);
+    });
+  });
+}
+
 async function watchRound(match,matchPath) {
   fs.watch(matchPath, async (eventType, filename) => {
     let roundPath = path.join(matchPath,filename)
@@ -50,6 +63,7 @@ async function watchRound(match,matchPath) {
       let playerBPath = (await fsAsync.readdir(roundPath)).find(file => file.substring(0,1)==="B")
       roundPath = path.join(roundPath,playerAPath)
       let state = await(require(path.join(roundPath,'JsonMap.json')))
+      let playerLog = await getLog(roundPath)
       broadcastRound({
         matchPath: matchPath,
         match: match,
@@ -57,6 +71,7 @@ async function watchRound(match,matchPath) {
         playerA: playerAPath,
         playerB: playerBPath,
         state: state,
+        playerLog: playerLog
       })
     },1000)
   })

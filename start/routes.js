@@ -17,9 +17,7 @@ const Route = use('Route')
 const Helpers = use("Helpers")
 const fs = Helpers.promisify(require('fs'));
 const path = use("path")
-Route.get('/', ({response}) => {
-    return response.route('live')
-})
+Route.on('/').render('welcome')
 
 Route.get('/game/live', ({view}) => {
     return view.render('live')
@@ -31,6 +29,19 @@ Route.post('/game', ({session, request, response}) => {
     return response.route('game', { round: 0 })
 })
 
+function getLog(roundPath) {
+    return new Promise(function(resolve, reject) {
+        console.log(path.join(roundPath,'Console','BotOutput.txt'))
+        fs.readFile(path.join(roundPath,'Console','BotOutput.txt'),'utf-8', function(err, data){
+            if (err) 
+                reject(err); 
+            else 
+            console.log(data)
+            resolve(data);
+        });
+    });
+}
+
 Route.get('/game/:round/:speed?', async({view, params, session}) => {
     console.log(session.get('replay_path'))
     let rounds = await fs.readdir(session.get('replay_path'))
@@ -41,6 +52,7 @@ Route.get('/game/:round/:speed?', async({view, params, session}) => {
     let playerBPath = (await fs.readdir(roundPath)).find(file => file.substring(0,1)==="B")
     roundPath = path.join(roundPath,playerAPath)
     let state = await(require(path.join(roundPath,'JsonMap.json')))
+    let playerLog = await getLog(roundPath)
     
     return view.render("game",{
         playerA: playerAPath,
@@ -49,7 +61,8 @@ Route.get('/game/:round/:speed?', async({view, params, session}) => {
         speed: parseInt(params.speed),
         state: state,
         gamePath: session.get('replay_path'),
-        maxRounds: maxRounds
+        maxRounds: maxRounds,
+        playerLog: playerLog
     })
     // return 'test'
 }).as("game")

@@ -2,7 +2,7 @@
   "name": "entelect-2018-viewer",
   "version": "1.0.0",
   "adonis-version": "4.1.0",
-  "description": "small viewer live preview the entelect battle",
+  "description": "small viewer live preview the entelect battle with replay",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
