@@ -15,7 +15,7 @@
           <li class="list-group-item">Health: {{state.players[0].health}}</li>
           <li class="list-group-item">Energy: {{state.players[0].energy}}</li>
           <li class="list-group-item">Score: {{state.players[0].score}}</li>
-          <li class="list-group-item"><pre>{{playerLog}}</pre></li>
+          <li class="list-group-item"><pre style="height: 200px;">{{playerLog}}</pre></li>
         </ul>
       </div>
       <div class="col">
@@ -55,7 +55,7 @@
     @endeach
   </div>
   <div class="card-body">
-    @if(currentRound != 0) 
+    @if(currentRound != 0)
     <a href="{{ route('game', { round: (currentRound - 1) }) }}">
       Prev
     </a>
@@ -76,9 +76,20 @@
 {{speed}}
 <script type="text/javascript">
   var timeOut = ""
-  
-  @if(speed > 0 && currentRound != maxRounds) 
+
+  @if(speed > 0 && currentRound != maxRounds)
   timeOut = setTimeout(()=>window.location="{{ route('game', { round: (currentRound +1),speed:speed }) }}",{{speed}})
   @endif
+</script>
+<script>
+window.addEventListener("keydown", function(e) {
+  let currentPage = Number(window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1))
+  if (e.keyCode == 39) {
+    window.location = currentPage + 1
+  }
+  if (e.keyCode == 37) {
+      window.location = currentPage - 1
+  }
+})
 </script>
 @endsection
