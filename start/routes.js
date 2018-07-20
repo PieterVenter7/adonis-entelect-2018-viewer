@@ -17,7 +17,9 @@ const Route = use('Route')
 const Helpers = use("Helpers")
 const fs = Helpers.promisify(require('fs'));
 const path = use("path")
-Route.on('/').render('welcome')
+Route.get('/', ({response}) => {
+    return response.route('live')
+})
 
 Route.get('/game/live', ({view}) => {
     return view.render('live')
