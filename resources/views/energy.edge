@@ -1,5 +1,13 @@
-@if(column.buildings[0].constructionTimeLeft === -1)
-<i class="fas fa-gem" title="H: {{column.buildings[0].health}}"></i>
+@if(column.buildings[0].playerType === "A")
+    @if(column.buildings[0].constructionTimeLeft === -1)
+        <i class="fas fa-bolt player-a" title="H: {{column.buildings[0].health}}"></i>
+    @else
+        <i class="fas fa-bolt player-a opaque" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    @endif
 @else
-<i class="far fa-gem" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    @if(column.buildings[0].constructionTimeLeft === -1)
+        <i class="fas fa-bolt player-b" title="H: {{column.buildings[0].health}}"></i>
+    @else
+        <i class="fas fa-bolt player-b opaque" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    @endif
 @endif
