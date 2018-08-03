@@ -1,13 +1,13 @@
 @if(column.buildings[0].playerType === "A")
     @if(column.buildings[0].constructionTimeLeft === -1)
-    <i class="fab fa-apple" title="H: {{column.buildings[0].health}}\n WC: {{column.buildings[0].weaponCooldownTimeLeft}}"></i>
+    <i class="fas fa-fighter-jet player-a" title="H: {{column.buildings[0].health}}\n WC: {{column.buildings[0].weaponCooldownTimeLeft}}"></i>
     @else
-    <i style="color:gray" class="fab fa-apple" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    <i class="fas fa-fighter-jet player-a opaque" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
     @endif
 @else
     @if(column.buildings[0].constructionTimeLeft === -1)
-    <i class="fab fa-linux" title="H: {{column.buildings[0].health}}\n WC: {{column.buildings[0].weaponCooldownTimeLeft}}"></i>
+    <i class="fas fa-fighter-jet player-b rotate" title="H: {{column.buildings[0].health}}\n WC: {{column.buildings[0].weaponCooldownTimeLeft}}"></i>
     @else
-    <i style="color:gray" class="fab fa-linux" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
+    <i class="fas fa-fighter-jet player-b rotate opaque" title="CTL: {{column.buildings[0].constructionTimeLeft}}"></i>
     @endif
 @endif
